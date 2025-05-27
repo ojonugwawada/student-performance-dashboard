@@ -1,0 +1,25 @@
+import streamlit as st
+import pandas as pd
+
+st.set_page_config(page_title="Student Performance Dashboard", layout="wide")
+
+# Load dataset
+df = pd.read_csv("student_habits_performance.csv")
+
+# App title
+st.title("📊 Student Academic Performance Dashboard")
+
+# Overview tab content
+st.header("📌 Project Overview")
+st.markdown("""
+This project analyzes how lifestyle habits and background factors affect academic performance using data science.
+
+**Dataset Highlights:**
+- 1000 students
+- Features include study hours, sleep, mental health, parental education, and more
+- Target: `exam_score`
+""")
+
+# Show the top 10 records
+st.subheader("🔍 Preview of the Dataset")
+st.dataframe(df.head(10), use_container_width=True)
