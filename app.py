@@ -6,118 +6,204 @@ from sklearn.metrics import mean_squared_error, r2_score
 import plotly.express as px
 import plotly.graph_objects as go
 
-st.set_page_config(page_title="Student Performance Dashboard", layout="wide")
-
-# Load dataset
-try:
-    df = pd.read_csv("student_habits_performance.csv")
-except FileNotFoundError:
-    st.error("❌ File 'student_habits_performance.csv' not found.")
-    st.stop()
-
-# App title
-st.title("📊 Student Academic Performance Dashboard")
-
-# Overview tab content
-st.header("📌 Project Overview")
-st.markdown("""
-This project analyzes how lifestyle habits and background factors affect academic performance using data science.
-
-**Dataset Highlights:**
-- 1000 students
-- Features include study hours, sleep, mental health, parental education, and more
-- Target: `exam_score`
-""")
-
-# Show the top 10 records
-st.subheader("🔍 Preview of the Dataset")
-st.dataframe(df.head(10), use_container_width=True)
-
-# EDA Section
-st.header("📈 Exploratory Data Analysis")
-
-# Distribution of Study Hours
-st.subheader("Study Hours per Day Distribution")
-fig1 = px.histogram(df, x="study_hours_per_day", nbins=30, color_discrete_sequence=['#0A66C2'])
-st.plotly_chart(fig1, use_container_width=True)
-
-# Distribution of Exam Scores
-st.subheader("Exam Score Distribution")
-fig2 = px.histogram(df, x="exam_score", nbins=30, color_discrete_sequence=['#2E7D32'])
-st.plotly_chart(fig2, use_container_width=True)
-
-# Correlation Heatmap
-st.subheader("Correlation Heatmap (Numeric Features)")
-corr = df.select_dtypes(include=['float64', 'int64']).corr()
-fig3 = go.Figure(data=go.Heatmap(
-    z=corr.values,
-    x=corr.columns,
-    y=corr.columns,
-    colorscale="Viridis"))
-st.plotly_chart(fig3, use_container_width=True)
-
-# Model Evaluation Section
-st.header("🤖 Model Evaluation")
-
-# Load the model and scaler
-model = joblib.load("best_model.pkl")
-scaler = joblib.load("scaler.pkl")
-
-# Load preprocessed data (only numeric for now)
-features = ["study_hours_per_day", "social_media_hours", "netflix_hours", "attendance_percentage", "sleep_hours"]
-X = df[features]
-y = df["exam_score"]
-
-# Scale the selected features
-X_scaled = scaler.transform(X)
-
-# Predict and evaluate
-y_pred = model.predict(X_scaled)
-rmse = np.sqrt(mean_squared_error(y, y_pred))  # Manual square root
-r2 = r2_score(y, y_pred)
-
-# Display performance
-st.subheader("📋 Model Performance")
-st.metric("RMSE", f"{rmse:.2f}")
-st.metric("R² Score", f"{r2:.2f}")
-
-# Actual vs Predicted Plot
-st.subheader("📉 Actual vs Predicted Exam Scores")
-fig4 = px.scatter(
-    x=y,
-    y=y_pred,
-    labels={'x': 'Actual Score', 'y': 'Predicted Score'},
-    title="Actual vs Predicted Scores",
-    trendline="ols"
+# Page configuration
+st.set_page_config(
+    page_title="Student Performance Dashboard",
+    layout="wide",
+    page_icon="🎓",
+    initial_sidebar_state="expanded"
 )
-st.plotly_chart(fig4, use_container_width=True)
 
-st.header("🎯 Predict Exam Score")
+# Custom CSS styling
+st.markdown("""
+    <style>
+        [data-testid="stSidebar"] {
+            background: linear-gradient(180deg, #2E75B6 0%, #1E3E74 100%) !important;
+        }
+        .main-title {
+            font-size: 2.8rem !important;
+            color: #2E75B6;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .section-header {
+            font-size: 1.6rem;
+            color: #1E3E74;
+            border-bottom: 3px solid #2E75B6;
+            padding-bottom: 6px;
+            margin-top: 20px;
+        }
+        .metric-card {
+            background: #f0f2f6;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 10px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .prediction-container {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+    </style>
+""", unsafe_allow_html=True)
 
-st.markdown("Adjust the sliders below to simulate a student's lifestyle and predict their exam score.")
+# Load data and models
+@st.cache_resource
+def load_data():
+    try:
+        df = pd.read_csv("student_habits_performance.csv")
+        return df
+    except FileNotFoundError:
+        st.error("❌ Dataset file not found. Please ensure 'student_habits_performance.csv' exists.")
+        st.stop()
 
-# Input sliders
-study_hours = st.slider("Study Hours per Day", 0.0, 12.0, 3.0)
-social_hours = st.slider("Social Media Hours per Day", 0.0, 10.0, 2.0)
-netflix_hours = st.slider("Netflix Hours per Day", 0.0, 10.0, 1.0)
-attendance = st.slider("Attendance Percentage", 0, 100, 75)
-sleep = st.slider("Sleep Hours per Night", 0.0, 12.0, 6.0)
+@st.cache_resource
+def load_models():
+    try:
+        model = joblib.load("best_model.pkl")
+        scaler = joblib.load("scaler.pkl")
+        return model, scaler
+    except FileNotFoundError:
+        st.error("❌ Model files not found. Please ensure both 'best_model.pkl' and 'scaler.pkl' exist.")
+        st.stop()
 
-# Format input
-input_df = pd.DataFrame([{
-    "study_hours_per_day": study_hours,
-    "social_media_hours": social_hours,
-    "netflix_hours": netflix_hours,
-    "attendance_percentage": attendance,
-    "sleep_hours": sleep
-}])
+# Main app
+df = load_data()
+model, scaler = load_models()
 
-# Scale input
-input_scaled = scaler.transform(input_df)
+# Main title
+st.markdown('<h1 class="main-title">Student Academic Performance Analyzer</h1>', unsafe_allow_html=True)
 
-# Predict
-predicted_score = model.predict(input_scaled)[0]
+# Create tabs
+tab1, tab2, tab3, tab4 = st.tabs(["📋 Overview", "📊 Data Analysis", "🤖 Model Insights", "🎯 Predictor"])
 
-# Display result
-st.success(f"📘 Predicted Exam Score: **{predicted_score:.2f}**")
+with tab1:
+    st.markdown("""
+    ## About This Dashboard
 
+    This interactive analytics platform examines the relationship between student lifestyle factors and academic performance.
+    Leveraging machine learning and data visualization, it provides insights into key performance drivers.
+
+    **Key Features:**
+    - Comprehensive dataset exploration
+    - Interactive visualizations
+    - Machine learning model evaluation
+    - Performance prediction simulator
+    """)
+
+    st.image("https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1920&q=80",
+             use_column_width=True, caption="Education Analytics Concept")
+
+    with st.expander("📁 Dataset Summary"):
+        st.dataframe(df.describe().T.style.background_gradient(cmap="Blues"), use_container_width=True)
+
+with tab2:
+    st.markdown('<div class="section-header">Exploratory Data Analysis</div>', unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        fig1 = px.histogram(df, x="study_hours_per_day", nbins=30,
+                          color_discrete_sequence=['#2E75B6'],
+                          title="Daily Study Hours Distribution")
+        st.plotly_chart(fig1, use_container_width=True)
+
+    with col2:
+        fig2 = px.box(df, y="exam_score", color_discrete_sequence=['#1E3E74'],
+                    title="Exam Score Distribution")
+        st.plotly_chart(fig2, use_container_width=True)
+
+    st.markdown('<div class="section-header">Feature Relationships</div>', unsafe_allow_html=True)
+    fig3 = px.scatter_matrix(df.select_dtypes(include=['number']),
+                           dimensions=["study_hours_per_day", "sleep_hours", "attendance_percentage", "exam_score"],
+                           color="exam_score", height=800)
+    st.plotly_chart(fig3, use_container_width=True)
+
+with tab3:
+    st.markdown('<div class="section-header">Model Performance Metrics</div>', unsafe_allow_html=True)
+
+    # Prepare data
+    features = ["study_hours_per_day", "social_media_hours", "netflix_hours",
+               "attendance_percentage", "sleep_hours"]
+    X = df[features]
+    y = df["exam_score"]
+    X_scaled = scaler.transform(X)
+    y_pred = model.predict(X_scaled)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown(f"""
+        <div class="metric-card">
+            <h3>Model Accuracy</h3>
+            <p style="font-size: 2.5rem; color: #1E3E74; margin: 10px 0;">
+                {r2_score(y, y_pred):.2f} R² Score
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown(f"""
+        <div class="metric-card">
+            <h3>Prediction Error</h3>
+            <p style="font-size: 2.5rem; color: #1E3E74; margin: 10px 0;">
+                {np.sqrt(mean_squared_error(y, y_pred)):.2f} RMSE
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown('<div class="section-header">Prediction Analysis</div>', unsafe_allow_html=True)
+    fig4 = px.scatter(x=y, y=y_pred, trendline="ols",
+                    labels={'x': 'Actual Scores', 'y': 'Predicted Scores'},
+                    title="Actual vs Predicted Exam Scores")
+    st.plotly_chart(fig4, use_container_width=True)
+
+with tab4:
+    st.markdown('<div class="section-header">Performance Predictor</div>', unsafe_allow_html=True)
+
+    with st.container():
+        st.markdown("""
+        Adjust the lifestyle parameters to simulate student habits and predict academic performance.
+        """)
+
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            study_hours = st.slider("📚 Study Hours/Day", 0.0, 12.0, 3.0, 0.5)
+            social_hours = st.slider("💬 Social Media Hours", 0.0, 10.0, 2.0, 0.5)
+        with col2:
+            netflix_hours = st.slider("🎬 Streaming Hours", 0.0, 10.0, 1.0, 0.5)
+            attendance = st.slider("✅ Attendance (%)", 0, 100, 75)
+        with col3:
+            sleep = st.slider("😴 Sleep Hours/Night", 0.0, 12.0, 6.0, 0.5)
+
+        input_df = pd.DataFrame([{
+            "study_hours_per_day": study_hours,
+            "social_media_hours": social_hours,
+            "netflix_hours": netflix_hours,
+            "attendance_percentage": attendance,
+            "sleep_hours": sleep
+        }])
+
+        if st.button("🚀 Calculate Predicted Score", use_container_width=True):
+            input_scaled = scaler.transform(input_df)
+            predicted_score = model.predict(input_scaled)[0]
+            st.markdown(f"""
+            <div class="prediction-container">
+                <h3 style="color: #1E3E74; margin: 0;">Predicted Exam Score</h3>
+                <div style="font-size: 3.5rem; color: #2E75B6; text-align: center; margin: 20px 0;">
+                    {predicted_score:.1f}/100
+                </div>
+                <p style="text-align: center; color: #666;">
+                    Based on current lifestyle parameters
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+
+# Footer
+st.markdown("""
+---
+<div style="text-align: center; color: #666; padding: 20px;">
+    Educational Analytics Dashboard • Built with Streamlit • Data Science Project
+</div>
+""", unsafe_allow_html=True)
