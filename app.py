@@ -95,10 +95,10 @@ with tab1:
     """)
 
     st.image("https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1920&q=80",
-             use_column_width=True, caption="Education Analytics Concept")
+             use_container_width=True, caption="Education Analytics Concept")
 
     with st.expander("📁 Dataset Summary"):
-        st.dataframe(df.describe().T.style.background_gradient(cmap="Blues"), use_container_width=True)
+        st.dataframe(df.describe().T, use_container_width=True)
 
 with tab2:
     st.markdown('<div class="section-header">Exploratory Data Analysis</div>', unsafe_allow_html=True)
