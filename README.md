@@ -60,8 +60,7 @@ Launch the app here →
 
 ## 🤝 Contributions & Feedback
 
-Suggestions, contributions, or feedback are welcome. Fork the repo, open issues, or connect with me on [LinkedIn](https://www.linkedin.com/in/ojonugwawada-47ba55b7).
+Suggestions, contributions, or feedback are welcome. Fork the repo, open issues, or connect with me on [LinkedIn](https://www.linkedin.com/in/ojonugwa-wada-47ba55b7).
 
----
-
+--- 
 © 2025 Ojonugwa Wada · For educational and academic purposes only.
