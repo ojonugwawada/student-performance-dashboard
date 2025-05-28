@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, r2_score
 import plotly.express as px
 import plotly.graph_objects as go
@@ -98,7 +99,12 @@ with tab1:
              use_container_width=True, caption="Education Analytics Concept")
 
     with st.expander("📁 Dataset Summary"):
-        st.dataframe(df.describe().T, use_container_width=True)
+        try:
+            styled_df = df.describe().T.style.background_gradient(cmap="Blues")
+            st.dataframe(styled_df, use_container_width=True)
+        except Exception as e:
+            st.error("Failed to render styled dataframe. Showing raw summary instead.")
+            st.dataframe(df.describe().T, use_container_width=True)
 
 with tab2:
     st.markdown('<div class="section-header">Exploratory Data Analysis</div>', unsafe_allow_html=True)
