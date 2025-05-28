@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 
 # Page configuration
 st.set_page_config(
-    page_title="Student Performance Dashboard",
+    page_title="Student Performance",
     layout="wide",
     page_icon="🎓",
     initial_sidebar_state="expanded"
@@ -75,6 +75,18 @@ def load_models():
 df = load_data()
 model, scaler = load_models()
 
+# Sidebar filters
+st.sidebar.header("🔍 Filter Students")
+age_range = st.sidebar.slider("Select Age Range", int(df.age.min()), int(df.age.max()), (18, 22))
+attendance_min = st.sidebar.slider("Minimum Attendance (%)", 0, 100, 70)
+health_filter = st.sidebar.multiselect("Mental Health Rating", sorted(df.mental_health_rating.unique().tolist()), default=sorted(df.mental_health_rating.unique().tolist()))
+
+filtered_df = df[
+    (df.age.between(*age_range)) &
+    (df.attendance_percentage >= attendance_min) &
+    (df.mental_health_rating.isin(health_filter))
+]
+
 # Main title
 st.markdown('<h1 class="main-title">Student Academic Performance Analyzer</h1>', unsafe_allow_html=True)
 
@@ -100,29 +112,29 @@ with tab1:
 
     with st.expander("📁 Dataset Summary"):
         try:
-            styled_df = df.describe().T.style.background_gradient(cmap="Blues")
+            styled_df = filtered_df.describe().T.style.background_gradient(cmap="Blues")
             st.dataframe(styled_df, use_container_width=True)
-        except Exception as e:
+        except Exception:
             st.error("Failed to render styled dataframe. Showing raw summary instead.")
-            st.dataframe(df.describe().T, use_container_width=True)
+            st.dataframe(filtered_df.describe().T, use_container_width=True)
 
 with tab2:
     st.markdown('<div class="section-header">Exploratory Data Analysis</div>', unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
     with col1:
-        fig1 = px.histogram(df, x="study_hours_per_day", nbins=30,
+        fig1 = px.histogram(filtered_df, x="study_hours_per_day", nbins=30,
                           color_discrete_sequence=['#2E75B6'],
                           title="Daily Study Hours Distribution")
         st.plotly_chart(fig1, use_container_width=True)
 
     with col2:
-        fig2 = px.box(df, y="exam_score", color_discrete_sequence=['#1E3E74'],
+        fig2 = px.box(filtered_df, y="exam_score", color_discrete_sequence=['#1E3E74'],
                     title="Exam Score Distribution")
         st.plotly_chart(fig2, use_container_width=True)
 
     st.markdown('<div class="section-header">Feature Relationships</div>', unsafe_allow_html=True)
-    fig3 = px.scatter_matrix(df.select_dtypes(include=['number']),
+    fig3 = px.scatter_matrix(filtered_df.select_dtypes(include=['number']),
                            dimensions=["study_hours_per_day", "sleep_hours", "attendance_percentage", "exam_score"],
                            color="exam_score", height=800)
     st.plotly_chart(fig3, use_container_width=True)
@@ -130,11 +142,9 @@ with tab2:
 with tab3:
     st.markdown('<div class="section-header">Model Performance Metrics</div>', unsafe_allow_html=True)
 
-    # Prepare data
-    features = ["study_hours_per_day", "social_media_hours", "netflix_hours",
-               "attendance_percentage", "sleep_hours"]
-    X = df[features]
-    y = df["exam_score"]
+    features = ["study_hours_per_day", "social_media_hours", "netflix_hours", "attendance_percentage", "sleep_hours"]
+    X = filtered_df[features]
+    y = filtered_df["exam_score"]
     X_scaled = scaler.transform(X)
     y_pred = model.predict(X_scaled)
 
@@ -161,8 +171,8 @@ with tab3:
 
     st.markdown('<div class="section-header">Prediction Analysis</div>', unsafe_allow_html=True)
     fig4 = px.scatter(x=y, y=y_pred, trendline="ols",
-                    labels={'x': 'Actual Scores', 'y': 'Predicted Scores'},
-                    title="Actual vs Predicted Exam Scores")
+                      labels={'x': 'Actual Scores', 'y': 'Predicted Scores'},
+                      title="Actual vs Predicted Exam Scores")
     st.plotly_chart(fig4, use_container_width=True)
 
 with tab4:
@@ -210,6 +220,6 @@ with tab4:
 st.markdown("""
 ---
 <div style="text-align: center; color: #666; padding: 20px;">
-    Educational Analytics Dashboard • Built with Streamlit • Data Science Project
+    Educational Analytics Dashboard • Streamlit • Data Science Project
 </div>
 """, unsafe_allow_html=True)

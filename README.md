@@ -21,46 +21,47 @@ An interactive dashboard exploring how student lifestyle factors and wellbeing i
 
 ## 🧰 Tech Stack
 
-- **Frontend**: Streamlit
-- **Backend**: Python
-- **Libraries**:
-  - `pandas`, `numpy` for data manipulation
-  - `scikit-learn`, `joblib` for ML model deployment
-  - `plotly` for interactive charts
-  - `statsmodels`, `matplotlib` for additional visuals
+- **Frontend**: Streamlit  
+- **Backend**: Python  
+- **Libraries**:  
+  - `pandas`, `numpy` for data manipulation  
+  - `scikit-learn`, `joblib` for ML model deployment  
+  - `plotly` for interactive charts  
+  - `statsmodels`, `matplotlib` for additional visuals  
 
 ---
 
 ## 🚀 Live App
 
-Launch the app here →  
+Launch the interactive Streamlit app here:  
 👉 [https://student-insight-app.streamlit.app](https://student-insight-app.streamlit.app)
 
 ---
 
 ## 🖼️ Screenshots
 
-### 📋 Overview Page
+### 📋 Overview Page  
 ![Overview](assets/overview-sample.png)
 
-### 🎯 Predicted Score Output
+### 🎯 Predicted Score Output  
 ![Prediction](assets/prediction-example.png)
 
 ---
 
 ## 🗂️ Repository Structure
 
-- `app.py`: Main dashboard script
-- `requirements.txt`: Dependency list
-- `student_habits_performance.csv`: Raw dataset
-- `scaler.pkl`, `best_model.pkl`: Pre-trained model files
-- `assets/`: Images used in README
+- `app.py`: Streamlit dashboard application logic  
+- `requirements.txt`: Python dependencies  
+- `student_habits_performance.csv`: Dataset  
+- `scaler.pkl`, `best_model.pkl`: ML scaler and trained model  
+- `assets/`: Screenshots and images used in README  
 
 ---
 
 ## 🤝 Contributions & Feedback
 
-Suggestions, contributions, or feedback are welcome. Fork the repo, open issues, or connect with me on [LinkedIn](https://www.linkedin.com/in/ojonugwa-wada-47ba55b7).
+Suggestions, contributions, or feedback are welcome.  
+Fork the repo, open issues, or connect with me on [LinkedIn](https://www.linkedin.com/in/ojonugwa-wada-47ba55b7).
 
---- 
+---  
 © 2025 Ojonugwa Wada · For educational and academic purposes only.
