@@ -32,7 +32,7 @@ This interactive dashboard explores how students' lifestyle habits and backgroun
 
 ## 🚀 Live App
 
-Launch the interactive Streamlit app here:
+Launch the interactive Streamlit app here:  
 👉 [https://student-insight-app.streamlit.app](https://student-insight-app.streamlit.app)
 
 ---
@@ -40,10 +40,10 @@ Launch the interactive Streamlit app here:
 ## 🖼️ Screenshots
 
 ### Dashboard Overview
-![Overview](https://github.com/ojonugwawada/student-performance-dashboard/assets/overview-sample.png)
+![Overview](assets/overview-sample.png)
 
 ### Predicted Score View
-![Prediction](https://github.com/ojonugwawada/student-performance-dashboard/assets/prediction-example.png)
+![Prediction](assets/prediction-example.png)
 
 ---
 
@@ -53,6 +53,7 @@ Launch the interactive Streamlit app here:
 - `requirements.txt`: Python dependencies
 - `student_habits_performance.csv`: Dataset used
 - `scaler.pkl` and `best_model.pkl`: Trained ML model and scaler
+- `assets/`: Folder containing demo screenshots for README
 
 ---
 
