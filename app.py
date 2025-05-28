@@ -3,13 +3,14 @@ import pandas as pd
 import joblib
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.metrics import mean_squared_error, r2_score
 import plotly.express as px
 import plotly.graph_objects as go
 
 # Page configuration
 st.set_page_config(
-    page_title="Student Performance",
+    page_title="Student Performance Dashboard",
     layout="wide",
     page_icon="🎓",
     initial_sidebar_state="expanded"
@@ -91,7 +92,7 @@ filtered_df = df[
 st.markdown('<h1 class="main-title">Student Academic Performance Analyzer</h1>', unsafe_allow_html=True)
 
 # Create tabs
-tab1, tab2, tab3, tab4 = st.tabs(["📋 Overview", "📊 Data Analysis", "🤖 Model Insights", "🎯 Predictor"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["📋 Overview", "📊 Data Analysis", "🧪 Feature Engineering", "🤖 Model Insights", "🎯 Predictor"])
 
 with tab1:
     st.markdown("""
@@ -140,6 +141,22 @@ with tab2:
     st.plotly_chart(fig3, use_container_width=True)
 
 with tab3:
+    st.markdown('<div class="section-header">Feature Engineering</div>', unsafe_allow_html=True)
+
+    with st.expander("📊 Correlation Heatmap"):
+        corr = filtered_df.select_dtypes(include=[np.number]).corr()
+        fig, ax = plt.subplots(figsize=(10, 6))
+        sns.heatmap(corr, annot=True, cmap="Blues", fmt=".2f", ax=ax)
+        st.pyplot(fig)
+
+    with st.expander("🔍 Feature Distribution"):
+        feature = st.selectbox("Choose a feature to explore", filtered_df.select_dtypes(include=[np.number]).columns)
+        fig, ax = plt.subplots()
+        sns.histplot(filtered_df[feature], kde=True, ax=ax, color="#2E75B6")
+        ax.set_title(f"Distribution of {feature}")
+        st.pyplot(fig)
+
+with tab4:
     st.markdown('<div class="section-header">Model Performance Metrics</div>', unsafe_allow_html=True)
 
     features = ["study_hours_per_day", "social_media_hours", "netflix_hours", "attendance_percentage", "sleep_hours"]
@@ -175,7 +192,7 @@ with tab3:
                       title="Actual vs Predicted Exam Scores")
     st.plotly_chart(fig4, use_container_width=True)
 
-with tab4:
+with tab5:
     st.markdown('<div class="section-header">Performance Predictor</div>', unsafe_allow_html=True)
 
     with st.container():
@@ -220,6 +237,6 @@ with tab4:
 st.markdown("""
 ---
 <div style="text-align: center; color: #666; padding: 20px;">
-    Educational Analytics Dashboard • Streamlit • Data Science Project
+    Educational Analytics Dashboard • Built with Streamlit • Data Science Project
 </div>
 """, unsafe_allow_html=True)
