@@ -4,17 +4,18 @@
 [![GitHub Repo](https://img.shields.io/badge/Repo-GitHub-blue?logo=github)](https://github.com/ojonugwawada/student-performance-dashboard)
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg?logo=python)](https://www.python.org/)
 
-This interactive dashboard explores how students' lifestyle habits and background factors influence their academic performance using data science techniques.
+An interactive dashboard exploring how student lifestyle factors and wellbeing influence academic performance — powered by data science and machine learning.
 
 ---
 
 ## 📌 Key Features
 
-- 📊 Visual insights into study hours, sleep, social media, and exam scores
-- 🤖 Predictive model using machine learning to estimate academic performance
-- 🔍 Actual vs Predicted score comparison
-- 📈 Correlation heatmap of numeric features
-- 🎛️ User input panel to simulate predictions
+- 📊 Visual insights into study habits, sleep, mental health, attendance, and scores
+- 🎨 Gradient-styled statistics tables for quick analysis
+- 🧠 Predictive model with real-time score simulation
+- 🧪 Sidebar filters: Age range, Attendance %, and Mental Health rating
+- 🔄 Actual vs Predicted score comparison
+- 📈 Multi-chart analysis with interactive Plotly visuals
 
 ---
 
@@ -23,44 +24,44 @@ This interactive dashboard explores how students' lifestyle habits and backgroun
 - **Frontend**: Streamlit
 - **Backend**: Python
 - **Libraries**:
-  - `pandas`, `numpy` for data handling
-  - `scikit-learn`, `joblib` for machine learning
-  - `plotly` for visualizations
-  - `statsmodels`, `matplotlib`
+  - `pandas`, `numpy` for data manipulation
+  - `scikit-learn`, `joblib` for ML model deployment
+  - `plotly` for interactive charts
+  - `statsmodels`, `matplotlib` for additional visuals
 
 ---
 
 ## 🚀 Live App
 
-Launch the interactive Streamlit app here:  
+Launch the app here →  
 👉 [https://student-insight-app.streamlit.app](https://student-insight-app.streamlit.app)
 
 ---
 
 ## 🖼️ Screenshots
 
-### Dashboard Overview
+### 📋 Overview Page
 ![Overview](assets/overview-sample.png)
 
-### Predicted Score View
+### 🎯 Predicted Score Output
 ![Prediction](assets/prediction-example.png)
 
 ---
 
-## 🗂️ Repository Contents
+## 🗂️ Repository Structure
 
-- `app.py`: Streamlit application logic
-- `requirements.txt`: Python dependencies
-- `student_habits_performance.csv`: Dataset used
-- `scaler.pkl` and `best_model.pkl`: Trained ML model and scaler
-- `assets/`: Folder containing demo screenshots for README
+- `app.py`: Main dashboard script
+- `requirements.txt`: Dependency list
+- `student_habits_performance.csv`: Raw dataset
+- `scaler.pkl`, `best_model.pkl`: Pre-trained model files
+- `assets/`: Images used in README
 
 ---
 
 ## 🤝 Contributions & Feedback
 
-Feel free to fork this project, suggest improvements, or raise issues! Connect with me via [LinkedIn](https://www.linkedin.com/in/ojonugwawada-47ba55b7).
+Suggestions, contributions, or feedback are welcome. Fork the repo, open issues, or connect with me on [LinkedIn](https://www.linkedin.com/in/ojonugwawada-47ba55b7).
 
 ---
 
-© 2025 Ojonugwa Wada | For academic and educational exploration.
+© 2025 Ojonugwa Wada · For educational and academic purposes only.
