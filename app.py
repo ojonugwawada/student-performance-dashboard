@@ -88,11 +88,24 @@ filtered_df = df[
     (df.mental_health_rating.isin(health_filter))
 ]
 
+# Theme selection
+theme = st.radio("Select Theme", ("Light", "Dark"))
+
+if theme == "Dark":
+    st.markdown("""
+        <style>
+            .main-title { color: white; }
+            .section-header { color: white; }
+            .metric-card { background: #333; color: white; }
+            .prediction-container { background: #444; color: white; }
+        </style>
+    """, unsafe_allow_html=True)
+
 # Main title
 st.markdown('<h1 class="main-title">Student Academic Performance Analyzer</h1>', unsafe_allow_html=True)
 
 # Create tabs
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["📋 Overview", "📊 Data Analysis", "🧪 Feature Engineering", "🤖 Model Insights", "🎯 Predictor"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["📋 Overview", "📊 Data Analysis", "🧪 Feature Engineering", "🤖 Model Insights", "🎯 Predictor", "📖 User Guide"])
 
 with tab1:
     st.markdown("""
@@ -124,20 +137,24 @@ with tab2:
 
     col1, col2 = st.columns(2)
     with col1:
+        # Interactive histogram with tooltips
         fig1 = px.histogram(filtered_df, x="study_hours_per_day", nbins=30,
-                          color_discrete_sequence=['#2E75B6'],
-                          title="Daily Study Hours Distribution")
+                             color_discrete_sequence=['#2E75B6'],
+                             title="Daily Study Hours Distribution",
+                             hover_data=['exam_score', 'attendance_percentage'])
         st.plotly_chart(fig1, use_container_width=True)
 
     with col2:
+        # Interactive box plot with tooltips
         fig2 = px.box(filtered_df, y="exam_score", color_discrete_sequence=['#1E3E74'],
-                    title="Exam Score Distribution")
+                       title="Exam Score Distribution",
+                       hover_data=['study_hours_per_day', 'attendance_percentage'])
         st.plotly_chart(fig2, use_container_width=True)
 
     st.markdown('<div class="section-header">Feature Relationships</div>', unsafe_allow_html=True)
     fig3 = px.scatter_matrix(filtered_df.select_dtypes(include=['number']),
-                           dimensions=["study_hours_per_day", "sleep_hours", "attendance_percentage", "exam_score"],
-                           color="exam_score", height=800)
+                              dimensions=["study_hours_per_day", "sleep_hours", "attendance_percentage", "exam_score"],
+                              color="exam_score", height=800)
     st.plotly_chart(fig3, use_container_width=True)
 
 with tab3:
@@ -232,6 +249,26 @@ with tab5:
                 </p>
             </div>
             """, unsafe_allow_html=True)
+
+            # Add download button
+            if st.button("Download Prediction Report"):
+                report_df = input_df.copy()
+                report_df['Predicted Score'] = predicted_score
+                report_df.to_csv('student_performance_report.csv', index=False)
+                st.success("Report downloaded successfully!")
+
+with tab6:
+    st.markdown("""
+    ## User Guide
+
+    This dashboard allows you to analyze student performance based on various lifestyle factors. 
+    - Use the sidebar to filter students based on age, attendance, and mental health rating.
+    - Explore the data analysis tab for visual insights.
+    - Use the performance predictor to simulate different study habits and see predicted exam scores.
+    - Download reports for your analysis.
+
+    For any issues, please contact support.
+    """)
 
 # Footer
 st.markdown("""
